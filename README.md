@@ -1,12 +1,15 @@
 # About the Project
 A full-stack flutter project for book management.
-This app has the following projects:
+This app has the following features:
 1. Login
 2. Register
-3. Recover your account (forgot password)
-4. Add a book (name, author)
-5. Add a review to any book
-6. Maintain a book-series
+3. E-mail verification
+4. Recover your account (forgot password)
+5. Add a book (title, author, description, keywords)
+6. Add a review to any book
+7. Maintain a book-series
+8. Search any book using filters (id, author, title, keywords)
+9. Check reviews for any book
 
 # Backend
 server folder contains all the backend files
