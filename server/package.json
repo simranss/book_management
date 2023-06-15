@@ -4,11 +4,13 @@
   "description": "Backend for book_management flutter app (mobile, web, desktop)",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Simran Sharma",
   "license": "NA",
   "dependencies": {
+    "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0"
