@@ -34,7 +34,7 @@ readerRouter.post('/login', (req, res) => {
         return res.status(405).json({message: "email or password field empty"});
     }
 
-    if(userExists(email)){
+    if (userExists(email)) {
         if (authenticatedUser(email, password)) {
             let accessToken = jwt.sign({
                 data: password
@@ -43,7 +43,7 @@ readerRouter.post('/login', (req, res) => {
             req.session.authorization = {
                 accessToken, email
             }
-            return res.status(200).send("User successfully logged in");
+            return res.status(200).json({message: "User successfully logged in"});
         } else {
             return res.status(401).json({message: "Incorrect password"});
         }
@@ -55,10 +55,11 @@ readerRouter.post('/login', (req, res) => {
 readerRouter.post("/register", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
+    const name = req.body.name;
 
     if (email && password) {
       if (!userExists(email)) {
-        users.push({"email": email, "password": password});
+        users.push({"name": name, "email": email, "password": password});
         return res.status(200).json({message: "User successfully registered. Now you can login"});
       } else {
         return res.status(404).json({message: "User already exists!"});
