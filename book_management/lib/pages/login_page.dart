@@ -1,89 +1,89 @@
 //import 'package:book_management/constants/api_strings.dart';
-import 'dart:convert';
-
 import 'package:book_management/models/login_model.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
-
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Required';
-                  }
-                  return null;
-                },
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 30,
+          ),
+          child: Consumer<LoginModel>(
+            builder: (_, model, __) => Form(
+              key: model.formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: model.emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Required';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: model.passwordController,
+                    keyboardType: TextInputType.text,
+                    obscureText: model.obscurePassword,
+                    decoration: InputDecoration(
+                      suffixIcon: Icon(model.obscurePassword
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off_rounded),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Required';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 40),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (model.formKey.currentState!.validate()) {
+                        model.login();
+                      }
+                    },
+                    child: const Text('Login'),
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: _passwordController,
-                keyboardType: TextInputType.text,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Required';
-                  }
-                  return null;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    var email = _emailController.text.trim();
-                    var pwd = _passwordController.text.trim();
-                    _login(context, email, pwd);
-                  }
-                },
-                child: const Text('Login'),
-              ),
-              Consumer<LoginModel>(
-                builder: (_, model, __) => Text(model.statusCode.toString()),
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
-  }
-
-  void _login(BuildContext context, String email, String password) async {
-    Map<String, String> data = {
-      'email': email,
-      'password': password,
-    };
-
-    Map<String, String> customHeaders = {"content-type": "application/json"};
-
-    try {
-      var response = await http.post(
-        Uri.parse('https://c8a3-103-38-68-253.ngrok-free.app/reader/login'),
-        headers: customHeaders,
-        body: jsonEncode(data),
-      );
-      print(response.statusCode);
-      print(response.body);
-      Provider.of<LoginModel>(context, listen: false)
-          .updateStatusCode(response.statusCode);
-    } catch (err) {
-      print(err);
-    }
-    //print(response.body);
   }
 }
