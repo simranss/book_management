@@ -42,15 +42,18 @@ class LoginPage extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
                   TextFormField(
                     controller: model.passwordController,
                     keyboardType: TextInputType.text,
                     obscureText: model.obscurePassword,
                     decoration: InputDecoration(
-                      suffixIcon: Icon(model.obscurePassword
-                          ? Icons.visibility_rounded
-                          : Icons.visibility_off_rounded),
+                      suffixIcon: IconButton(
+                        icon: Icon(model.obscurePassword
+                            ? Icons.visibility_rounded
+                            : Icons.visibility_off_rounded),
+                        onPressed: () => model.toggleObscurePassword(),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
@@ -69,8 +72,32 @@ class LoginPage extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 10),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text("Don't have an account?"),
+                      InkWell(
+                        child: Text(
+                          "Register",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
                   ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<OutlinedBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      )),
+                    ),
                     onPressed: () {
                       if (model.formKey.currentState!.validate()) {
                         model.login();

@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       home: SafeArea(
         child: ChangeNotifierProvider(
           create: (_) => LoginModel(),
-          child: LoginPage(),
+          child: const LoginPage(),
         ),
       ),
     );
