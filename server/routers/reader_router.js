@@ -1,71 +1,97 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-let users = require('./../data/usersdb.js');
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const usersDB = require("../services/users");
 
 const readerRouter = express.Router();
 
-const userExists = (email) => {
-    let validUsers = users.filter((user) => {
-        return (user.email === email);
-    });
-    if (validUsers.length > 0) {
-        return true;
+const userByEmailOrPhone = async (email, phone) => {
+  let validUsers = [];
+  try {
+    validUsers = await usersDB.getUserByEmailOrPhone(email, phone);
+    if (validUsers) {
+      return validUsers;
     } else {
-        return false;
+      return [];
     }
-}
+  } catch (error) {
+    console.log("error: ", error);
+  } finally {
+    return validUsers;
+  }
+};
 
-const authenticatedUser = (email, password) => {
-    let validUsers = users.filter((user) => {
-        return (user.email === email && user.password === password);
-    });
-    if (validUsers.length > 0) {
-        return true;
+readerRouter.post("/login", async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password) {
+    return res.status(405).json({ message: "email or password field empty" });
+  }
+
+  let validUsers = await userByEmailOrPhone(email, "");
+
+  if (validUsers.length > 0) {
+    let validUser = validUsers[0];
+    let validPassword = validUser["password"];
+    if (validPassword.toString().trim() === password.toString().trim()) {
+      let accessToken = jwt.sign(
+        {
+          data: password,
+        },
+        "access",
+        { expiresIn: 60 * 60 }
+      );
+
+      req.session.authorization = {
+        accessToken,
+        email,
+      };
+      return res.status(200).json({ message: "User successfully logged in" });
     } else {
-        return false;
+      return res.status(401).json({ message: "Incorrect password" });
     }
-}
-
-readerRouter.post('/login', (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-
-    if (!email || !password) {
-        return res.status(405).json({message: "email or password field empty"});
-    }
-
-    if (userExists(email)) {
-        if (authenticatedUser(email, password)) {
-            let accessToken = jwt.sign({
-                data: password
-            }, 'access', { expiresIn: 60 * 60 });
-
-            req.session.authorization = {
-                accessToken, email
-            }
-            return res.status(200).json({message: "User successfully logged in"});
-        } else {
-            return res.status(401).json({message: "Incorrect password"});
-        }
-    } else {
-        return res.status(404).json({message: 'user does not exist'});
-    }
+  } else {
+    return res.status(404).json({ message: "user does not exist" });
+  }
 });
 
-readerRouter.post("/register", (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    const name = req.body.name;
+readerRouter.post("/register", async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const name = req.body.name;
+  const phone = req.body.phone;
 
-    if (email && password) {
-      if (!userExists(email)) {
-        users.push({"name": name, "email": email, "password": password});
-        return res.status(200).json({message: "User successfully registered. Now you can login"});
+  if (email) {
+    if (name) {
+      if (phone) {
+        if (password) {
+          let validUsers = await userByEmailOrPhone(email, phone);
+          if (validUsers.length === 0) {
+            try {
+              await usersDB.insertUser(name, email, phone, password);
+              return res.status(200).json({
+                message: "User successfully registered. Now you can login",
+              });
+            } catch (error) {
+              console.log("error: ", error);
+              return res.status(500).json({ message: "Internal Server Error" });
+            }
+          } else {
+            return res.status(404).json({ message: "User already exists!" });
+          }
+        } else {
+          return res.status(405).json({ message: "Password required." });
+        }
       } else {
-        return res.status(404).json({message: "User already exists!"});
+        return res.status(405).json({ message: "Phone required." });
       }
+    } else {
+      return res.status(405).json({ message: "Name required." });
     }
-    return res.status(405).json({message: "Email or password field empty."});
+  } else {
+    return res.status(405).json({ message: "Email required." });
+  }
+  return res.status(500).json({ message: "Internal Server Error" });
 });
 
 module.exports.readerRouter = readerRouter;
