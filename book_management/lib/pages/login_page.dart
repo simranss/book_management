@@ -24,6 +24,8 @@ class LoginPage extends StatelessWidget {
                     controller: model.emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
+                      hintText: 'E-mail',
+                      isDense: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
@@ -48,6 +50,8 @@ class LoginPage extends StatelessWidget {
                     keyboardType: TextInputType.text,
                     obscureText: model.obscurePassword,
                     decoration: InputDecoration(
+                      hintText: 'Password',
+                      isDense: true,
                       suffixIcon: IconButton(
                         icon: Icon(model.obscurePassword
                             ? Icons.visibility_rounded
