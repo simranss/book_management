@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const session = require("express-session");
 const readerRouter = require("./routers/reader_router.js").readerRouter;
+const generalRouter = require("./routers/general_router.js").generalRouter;
 require("dotenv").config();
 const cors = require("cors");
 
@@ -40,9 +41,10 @@ app.use("/reader/book/*", function auth(req, res, next) {
 const PORT = process.env.PORT;
 
 app.use("/reader", readerRouter);
+app.use("/general", generalRouter);
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "ok" });
+  res.status(200).json({ message: "All good" });
 });
 
 app.listen(PORT, () => {

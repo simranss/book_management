@@ -91,7 +91,6 @@ readerRouter.post("/register", async (req, res) => {
   } else {
     return res.status(405).json({ message: "Email required." });
   }
-  return res.status(500).json({ message: "Internal Server Error" });
 });
 
 module.exports.readerRouter = readerRouter;
