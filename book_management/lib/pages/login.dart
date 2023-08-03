@@ -1,5 +1,7 @@
-//import 'package:book_management/constants/api_strings.dart';
-import 'package:book_management/models/login_model.dart';
+import 'package:book_management/models/login.dart';
+import 'package:book_management/models/register.dart';
+import 'package:book_management/pages/register.dart';
+import 'package:book_management/utils/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -77,15 +79,22 @@ class LoginPage extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 10),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text("Don't have an account?"),
+                      const Text("Don't have an account?"),
                       InkWell(
-                        child: Text(
+                        child: const Text(
                           "Register",
                           style: TextStyle(color: Colors.blue),
+                        ),
+                        onTap: () => NavigationUtils.push(
+                          context,
+                          ChangeNotifierProvider<RegisterModel>(
+                            create: (_) => RegisterModel(),
+                            child: const RegisterPage(),
+                          ),
                         ),
                       ),
                     ],
@@ -104,7 +113,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     onPressed: () {
                       if (model.formKey.currentState!.validate()) {
-                        model.login();
+                        model.login(context);
                       }
                     },
                     child: const Text('Login'),

@@ -1,5 +1,5 @@
-import 'package:book_management/models/login_model.dart';
-import 'package:book_management/pages/login_page.dart';
+import 'package:book_management/models/login.dart';
+import 'package:book_management/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -17,7 +17,7 @@ class LoginModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  login() async {
+  login(BuildContext context) async {
     Map<String, String> data = {
       'email': emailController.text.trim(),
       'password': passwordController.text.trim(),
@@ -33,6 +33,11 @@ class LoginModel extends ChangeNotifier {
       );
       debugPrint('status code: ${response.statusCode}');
       debugPrint(response.body);
+
+      if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(jsonDecode(response.body)['message'])));
+        }
     } catch (err) {
       debugPrint('error: $err');
     }
