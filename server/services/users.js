@@ -10,7 +10,7 @@ async function getUserByEmailOrPhone(email, phone) {
 
 const insertUser = async (name, email, phone, password) => {
   const result = await db.query(
-    `insert into users (name, email, phone, password) values (\"${name}\", \"${email}\", \"${phone}\", \"${password}\");`
+    `insert into users (name, email, phone, password, verified) values (\"${name}\", \"${email}\", \"${phone}\", \"${password}\", 0);`
   );
   console.log(result);
   return result;

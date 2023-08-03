@@ -1,8 +1,7 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const booksDB = require("../services/books");
 
-const generalRouter = express.Router();
+const bookRouter = express.Router();
 
 const getBooks = async () => {
   let books = [];
@@ -63,7 +62,7 @@ const getBooksByTitle = async (title) => {
   }
 };
 
-generalRouter.get("/books", async (req, res) => {
+bookRouter.get("/books", async (req, res) => {
   const books = await getBooks();
   if (books.length > 0) {
     return res.status(200).send(books);
@@ -71,7 +70,7 @@ generalRouter.get("/books", async (req, res) => {
   res.status(404).json({ message: "No books found." });
 });
 
-generalRouter.get("/book/id/:id", async (req, res) => {
+bookRouter.get("/book/id/:id", async (req, res) => {
   const id = req.params.id;
   const book = await getBookById(id);
   if (book["id"]) {
@@ -80,7 +79,7 @@ generalRouter.get("/book/id/:id", async (req, res) => {
   return res.status(404).json({ message: `No book with id ${id}` });
 });
 
-generalRouter.get("/books/author/:author", async (req, res) => {
+bookRouter.get("/books/author/:author", async (req, res) => {
   const author = req.params.author;
   const books = await getBooksByAuthor(author);
   if (books.length > 0) {
@@ -89,7 +88,7 @@ generalRouter.get("/books/author/:author", async (req, res) => {
   res.status(404).json({ message: "No books found." });
 });
 
-generalRouter.get("/books/title/:title", async (req, res) => {
+bookRouter.get("/books/title/:title", async (req, res) => {
   const title = req.params.title;
   const books = await getBooksByTitle(title);
   if (books.length > 0) {
@@ -99,5 +98,5 @@ generalRouter.get("/books/title/:title", async (req, res) => {
 });
 
 module.exports = {
-  generalRouter,
+  bookRouter: bookRouter,
 };
