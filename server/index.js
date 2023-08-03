@@ -1,7 +1,6 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
-const session = require("express-session");
 const readerRouter = require("./routers/reader_router.js").readerRouter;
+const bookRouter = require("./routers/book_router.js").bookRouter;
 require("dotenv").config();
 const cors = require("cors");
 
@@ -15,34 +14,13 @@ app.use(
 );
 app.use(cors());
 
-app.use(
-  "/reader/book",
-  session({ secret: "book_reader", resave: true, saveUninitialized: true })
-);
-
-app.use("/reader/book/*", function auth(req, res, next) {
-  if (req.session.authorization) {
-    let token = req.session.authorization["accessToken"]; // Access Token
-
-    jwt.verify(token, "access", (err, user) => {
-      if (!err) {
-        req.user = user;
-        next();
-      } else {
-        return res.status(403).json({ message: "User not authenticated" });
-      }
-    });
-  } else {
-    return res.status(402).json({ message: "User not logged in" });
-  }
-});
-
 const PORT = process.env.PORT;
 
 app.use("/reader", readerRouter);
+app.use("/", bookRouter);
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "ok" });
+  res.status(200).json({ message: "All good" });
 });
 
 app.listen(PORT, () => {

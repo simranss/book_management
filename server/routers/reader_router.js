@@ -1,5 +1,4 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const usersDB = require("../services/users");
 
 const readerRouter = express.Router();
@@ -34,18 +33,6 @@ readerRouter.post("/login", async (req, res) => {
     let validUser = validUsers[0];
     let validPassword = validUser["password"];
     if (validPassword.toString().trim() === password.toString().trim()) {
-      let accessToken = jwt.sign(
-        {
-          data: password,
-        },
-        "access",
-        { expiresIn: 60 * 60 }
-      );
-
-      req.session.authorization = {
-        accessToken,
-        email,
-      };
       return res.status(200).json({ message: "User successfully logged in" });
     } else {
       return res.status(401).json({ message: "Incorrect password" });
@@ -77,7 +64,7 @@ readerRouter.post("/register", async (req, res) => {
               return res.status(500).json({ message: "Internal Server Error" });
             }
           } else {
-            return res.status(404).json({ message: "User already exists!" });
+            return res.status(406).json({ message: "User already exists!" });
           }
         } else {
           return res.status(405).json({ message: "Password required." });
@@ -91,7 +78,6 @@ readerRouter.post("/register", async (req, res) => {
   } else {
     return res.status(405).json({ message: "Email required." });
   }
-  return res.status(500).json({ message: "Internal Server Error" });
 });
 
 module.exports.readerRouter = readerRouter;
