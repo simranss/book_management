@@ -1,3 +1,5 @@
+import 'package:book_management/pages/home.dart';
+import 'package:book_management/utils/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -35,9 +37,15 @@ class LoginModel extends ChangeNotifier {
       debugPrint(response.body);
 
       if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(jsonDecode(response.body)['message'])));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(jsonDecode(response.body)['message'])));
+      }
+
+      if (response.statusCode == 200) {
+        if (context.mounted) {
+          NavigationUtils.pushReplacement(context, const HomePage());
         }
+      }
     } catch (err) {
       debugPrint('error: $err');
     }
