@@ -131,36 +131,38 @@ class RegisterPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 15),
-                TextFormField(
-                  controller: model.passwordController,
-                  keyboardType: TextInputType.text,
-                  obscureText: model.obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    isDense: true,
-                    suffixIcon: IconButton(
-                      icon: Icon(model.obscurePassword
-                          ? Icons.visibility_rounded
-                          : Icons.visibility_off_rounded),
-                      onPressed: () => model.toggleObscurePassword(),
+                Consumer<RegisterModel>(
+                  builder: (_, model, __) => TextFormField(
+                    controller: model.passwordController,
+                    keyboardType: TextInputType.text,
+                    obscureText: model.obscurePassword,
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      isDense: true,
+                      suffixIcon: IconButton(
+                        icon: Icon(model.obscurePassword
+                            ? Icons.visibility_rounded
+                            : Icons.visibility_off_rounded),
+                        onPressed: () => model.toggleObscurePassword(),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Required';
+                      }
+                      return value.isValidPassword();
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Required';
-                    }
-                    return value.isValidPassword();
-                  },
                 ),
                 const SizedBox(height: 10),
                 Row(

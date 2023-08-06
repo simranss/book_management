@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:book_management/utils/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -43,14 +46,30 @@ class RegisterModel extends ChangeNotifier {
           body: jsonEncode(data),
         );
         debugPrint('status code: ${response.statusCode}');
-        debugPrint(response.body);
+        debugPrint('response body: ${response.body}');
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(jsonDecode(response.body)['message'])));
         }
+
+        if (response.statusCode == 200) {
+          if (context.mounted) {
+            NavigationUtils.pop(context);
+          }
+        }
+      } on SocketException {
+        debugPrint('error: No internet');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('No Internet')));
+        }
       } catch (err) {
         debugPrint('error: $err');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Something went wrong')));
+        }
       }
     }
   }
