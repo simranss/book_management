@@ -1,7 +1,7 @@
 class Book {
   final int id, pages, releaseYear;
   final String title, description, author;
-  final int? bookSeriesId;
+  final String? bookSeries;
 
   const Book(
     this.id,
@@ -10,7 +10,7 @@ class Book {
     required this.author,
     required this.pages,
     required this.releaseYear,
-    required this.bookSeriesId,
+    required this.bookSeries,
   });
 
   static Book fromMap(Map<String, dynamic> map) {
@@ -21,7 +21,7 @@ class Book {
       author: map['author'],
       pages: map['pages'],
       releaseYear: map['release_year'],
-      bookSeriesId: map['book_series'],
+      bookSeries: map['series_name'],
     );
   }
 }

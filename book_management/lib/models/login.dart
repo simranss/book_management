@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:book_management/models/home.dart';
 import 'package:book_management/pages/home.dart';
 import 'package:book_management/utils/navigation_utils.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:book_management/constants/api_strings.dart';
+import 'package:provider/provider.dart';
 
 class LoginModel extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();
@@ -45,7 +47,13 @@ class LoginModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         if (context.mounted) {
-          NavigationUtils.pushReplacement(context, const HomePage());
+          NavigationUtils.pushReplacement(
+            context,
+            ChangeNotifierProvider(
+              create: (_) => HomeModel(),
+              child: const HomePage(),
+            ),
+          );
         }
       }
     } on SocketException {
