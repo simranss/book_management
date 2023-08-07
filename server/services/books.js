@@ -34,10 +34,24 @@ const getBooksByTitle = async (title) => {
 
 const getLatestBooks = async () => {
   const rows = await db.query(
-    `select books.id, books.title, books.description, books.pages, books.release_year, book_series.name as series_name, authors.name as author, books.book_series as series_id, books.author as author_id from books left join book_series on books.book_series = book_series.id left join authors on books.author = authors.id order by books release_year desc limit 50;`
+    `select books.id, books.title, books.description, books.pages, books.release_year, book_series.name as series_name, authors.name as author, books.book_series as series_id, books.author as author_id from books left join book_series on books.book_series = book_series.id left join authors on books.author = authors.id order by books.release_year desc limit 50;`
   );
   console.log(rows);
   return rows;
+};
+
+const getAuthorsByName = async (name) => {
+  const rows = await db.query(
+    `select * from authors where name like \"%${name}%\" order by name asc limit 50;`
+  );
+  console.log(rows);
+  return rows;
+};
+
+const getAuthorById = async (id) => {
+  const row = await db.query(`select * from authors where id = ${id};`);
+  console.log(row);
+  return row;
 };
 
 module.exports = {
@@ -46,4 +60,6 @@ module.exports = {
   getBooksByAuthor,
   getBooksByTitle,
   getLatestBooks,
+  getAuthorsByName,
+  getAuthorById,
 };
