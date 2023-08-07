@@ -38,7 +38,7 @@ readerRouter.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Incorrect password" });
     }
   } else {
-    return res.status(404).json({ message: "user does not exist" });
+    return res.status(404).json({ message: "User does not exist" });
   }
 });
 
