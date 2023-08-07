@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:book_management/classes/author.dart';
 import 'package:book_management/constants/api_strings.dart';
 import 'package:book_management/utils/navigation_utils.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class AddBookModel extends ChangeNotifier {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final pagesController = TextEditingController();
-  final authorController = TextEditingController();
+  late Author author;
 
   DateTime selectedDate = DateTime.now();
 
@@ -25,14 +26,14 @@ class AddBookModel extends ChangeNotifier {
   addBook(BuildContext context) async {
     debugPrint('title: ${titleController.text.trim()}');
     debugPrint('desc: ${descriptionController.text.trim()}');
-    debugPrint('author: ${authorController.text.trim()}');
+    debugPrint('author: ${author.name} --> ${author.id}');
     debugPrint('pages: ${pagesController.text.trim()}');
     debugPrint('release year: ${selectedDate.year}');
 
     Map<String, String> dataToSend = {
       'title': titleController.text.trim(),
       'description': descriptionController.text.trim(),
-      'author': authorController.text.trim(),
+      'author': author.id.toString(),
       'pages': pagesController.text.trim(),
       'release_year': selectedDate.year.toString(),
     };
@@ -64,5 +65,35 @@ class AddBookModel extends ChangeNotifier {
             const SnackBar(content: Text('Something went wrong')));
       }
     }
+  }
+
+  Future<List<Author>> searchAuthorsByName(
+      BuildContext context, String query) async {
+    List<Author> authors = [];
+    try {
+      final response =
+          await http.get(Uri.parse('${APIStrings.AUTHORS_BY_NAME_API}/$query'));
+      debugPrint('status code: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        var body = response.body;
+        List data = jsonDecode(body);
+        if (data.isEmpty) {
+          return [];
+        }
+        for (Map<String, dynamic> authorData in data) {
+          Author author = Author.fromMap(authorData);
+          authors.add(author);
+        }
+        return authors;
+      }
+    } on SocketException {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('No Internet')));
+      }
+    } catch (err) {
+      debugPrint('error: $err');
+    }
+    return authors;
   }
 }

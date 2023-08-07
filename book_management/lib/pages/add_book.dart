@@ -1,3 +1,4 @@
+import 'package:book_management/classes/author.dart';
 import 'package:book_management/models/add_book.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -81,29 +82,48 @@ class AddBookPage extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 15),
-                  TextFormField(
-                    controller: addBookModel.authorController,
-                    keyboardType: TextInputType.name,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                      hintText: 'Author',
-                      isDense: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.blue),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Required';
+                  Autocomplete<Author>(
+                    fieldViewBuilder: (_, textEditingController, focusNode,
+                        onFieldSubmitted) {
+                      return TextFormField(
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        onEditingComplete: onFieldSubmitted,
+                        keyboardType: TextInputType.name,
+                        textCapitalization: TextCapitalization.words,
+                        decoration: InputDecoration(
+                          hintText: 'Author',
+                          isDense: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.blue),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                      );
+                    },
+                    optionsBuilder: (textEditingValue) async {
+                      if (textEditingValue.text.trim().isNotEmpty) {
+                        return await addBookModel.searchAuthorsByName(
+                            context, textEditingValue.text.trim());
                       }
-                      return null;
+                      return [];
+                    },
+                    displayStringForOption: (author) => author.name,
+                    onSelected: (author) {
+                      debugPrint('author selected ${author.name}');
+                      addBookModel.author = author;
                     },
                   ),
                   const SizedBox(height: 15),
