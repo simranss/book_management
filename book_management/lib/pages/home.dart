@@ -6,6 +6,7 @@ import 'package:book_management/constants/api_strings.dart';
 import 'package:book_management/models/add_book.dart';
 import 'package:book_management/models/home.dart';
 import 'package:book_management/pages/add_book.dart';
+import 'package:book_management/pages/book_details.dart';
 import 'package:book_management/utils/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -29,33 +30,36 @@ class HomePage extends StatelessWidget {
               ),
               child: Autocomplete<Book>(
                 fieldViewBuilder:
-                    (_, textEditingController, focusNode, onFieldSubmitted) =>
-                        TextField(
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  onEditingComplete: onFieldSubmitted,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.only(
-                      left: 12,
-                      right: 12,
-                      top: 13,
+                    (_, textEditingController, focusNode, onFieldSubmitted) {
+                  homeModel.searchController = textEditingController;
+                  homeModel.searchFocusNode = focusNode;
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    onEditingComplete: onFieldSubmitted,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.only(
+                        left: 12,
+                        right: 12,
+                        top: 13,
+                      ),
+                      suffixIcon: Icon(
+                        Icons.search_rounded,
+                        color: Colors.black45,
+                        size: 25,
+                      ),
+                      hintText: 'Search your book',
+                      hintStyle: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
                     ),
-                    suffixIcon: Icon(
-                      Icons.search_rounded,
-                      color: Colors.black45,
-                      size: 25,
-                    ),
-                    hintText: 'Search your book',
-                    hintStyle: TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                  ),
-                ),
+                  );
+                },
                 optionsBuilder: (textEditingValue) async {
                   if (textEditingValue.text.trim().isNotEmpty) {
                     return await homeModel.searchBooksByTitle(
@@ -67,6 +71,11 @@ class HomePage extends StatelessWidget {
                     '${book.title} by ${book.author}',
                 onSelected: (book) {
                   debugPrint('book selected ${book.title} --- ${book.author}');
+                  homeModel.searchController.clear();
+                  if (homeModel.searchFocusNode.hasFocus) {
+                    homeModel.searchFocusNode.unfocus();
+                  }
+                  NavigationUtils.push(context, BookDetailsPage(book: book));
                 },
               ),
             ),
@@ -109,6 +118,10 @@ class HomePage extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 trailing: Text(book.releaseYear.toString()),
+                                onTap: () => NavigationUtils.push(
+                                  context,
+                                  BookDetailsPage(book: book),
+                                ),
                               );
                             },
                             separatorBuilder: (context, index) =>

@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class HomeModel extends ChangeNotifier {
+  late TextEditingController searchController;
+  late FocusNode searchFocusNode;
+
   Future<List<Book>> searchBooksByTitle(
       BuildContext context, String query) async {
     List<Book> books = [];
