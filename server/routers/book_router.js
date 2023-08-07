@@ -81,12 +81,12 @@ bookRouter.get("/books", async (req, res) => {
 bookRouter.post("/book", async (req, res) => {
   const title = req.body.title;
   const description = req.body.description;
-  const author = req.body.author;
+  const authorId = req.body.author_id;
   const pages = req.body.pages;
   const releaseYear = req.body.release_year;
 
-  if (title && description && author && pages && releaseYear) {
-    await insertBook(title, description, author, pages, releaseYear);
+  if (title && description && authorId && pages && releaseYear) {
+    await insertBook(title, description, authorId, pages, releaseYear);
     return res.status(200).json({ message: "Book inserted successfully" });
   }
   res.status(405).json({ message: "One or more fields empty" });

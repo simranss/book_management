@@ -1,8 +1,11 @@
-let book_table =
-    "create table if not exists books ( id int auto_increment, title varchar(255) not null, description longtext not null, pages int, author varchar(255) not null, book_series int, release_year int not null, primary key (id), foreign key (book_series) references book_series(id) );";
+let authors_table =
+    "create table if not exists authors ( id int auto_increment, name varchar(255) not null, description longtext not null, website varchar(255), primary key (id) );
 
 let book_series_table =
-    "create table if not exists book_series ( id int auto_increment, name varchar(255) not null, author varchar(255) not null, primary key (id) );";
+    "create table if not exists book_series ( id int auto_increment, name varchar(255) not null, author int not null, primary key (id), foreign key (author) references author(id) );";
+
+let books_table =
+    "create table if not exists books ( id int auto_increment, title varchar(255) not null, description longtext not null, pages int, author int not null, book_series int, release_year int not null, primary key (id), foreign key (book_series) references book_series(id), foreign key (author) references author(id) );";
 
 let users_table =
     "create table if not exists users ( id int auto_increment, name varchar(255) not null, email varchar(255) not null, phone char(15) not null, password varchar(255) not null, verified int not null, primary key (id) );";
