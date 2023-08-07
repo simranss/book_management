@@ -8,7 +8,8 @@ class APIStrings {
 
   // books APIs
   static const String BOOKS_API = '$BASE_URL/books';
-  static const String BOOK_BY_ID_API = '$BASE_URL/book/id';
+  static const String BOOK_API = '$BASE_URL/book';
+  static const String BOOK_BY_ID_API = '$BOOK_API/id';
   static const String BOOKS_BY_AUTHOR_API = '$BOOKS_API/author';
   static const String BOOKS_BY_TITLE_API = '$BOOKS_API/title';
 }

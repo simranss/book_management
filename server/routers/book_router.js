@@ -62,12 +62,34 @@ const getBooksByTitle = async (title) => {
   }
 };
 
+const insertBook = async (title, description, author, pages, releaseYear) => {
+  try {
+    await booksDB.insertBook(title, description, pages, author, releaseYear);
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
 bookRouter.get("/books", async (req, res) => {
   const books = await getBooks();
   if (books.length > 0) {
     return res.status(200).send(books);
   }
   res.status(404).json({ message: "No books found." });
+});
+
+bookRouter.post("/book", async (req, res) => {
+  const title = req.body.title;
+  const description = req.body.description;
+  const author = req.body.author;
+  const pages = req.body.pages;
+  const releaseYear = req.body.release_year;
+
+  if (title && description && author && pages && releaseYear) {
+    await insertBook(title, description, author, pages, releaseYear);
+    return res.status(200).json({ message: "Book inserted successfully" });
+  }
+  res.status(405).json({ message: "One or more fields empty" });
 });
 
 bookRouter.get("/book/id/:id", async (req, res) => {

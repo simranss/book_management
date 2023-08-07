@@ -74,7 +74,7 @@ class AddBookPage extends StatelessWidget {
                       if (value == null || value.trim().isEmpty) {
                         return 'Required';
                       }
-                      if (value.trim().length > 300) {
+                      if (value.trim().length > 1000) {
                         return 'Maximum 1000 characters allowed';
                       }
                       return null;
@@ -168,7 +168,7 @@ class AddBookPage extends StatelessWidget {
                     onPressed: () {
                       debugPrint('add clicked');
                       if (addBookModel.formKey.currentState!.validate()) {
-                        addBookModel.addBook();
+                        addBookModel.addBook(context);
                       }
                     },
                     child: const Text('Add'),
