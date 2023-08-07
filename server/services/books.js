@@ -32,7 +32,7 @@ const getBooksByTitle = async (title) => {
 
 const getLatestBooks = async () => {
   const rows = await db.query(
-    `select * from books order by release_year desc limit 50;`
+    `select books.id, books.title, books.description, books.pages, books.release_year, book_series.name as series_name, books.author from books left join book_series on books.book_series = book_series.id order by books.release_year desc limit 50;`
   );
   console.log(rows);
   return rows;
