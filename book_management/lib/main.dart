@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
   Widget _showPage() {
     return FutureBuilder<bool?>(
       future: SharedPrefsUtils.getBool(SharedPrefsStrings.isLoggedIn),
-      builder: (_, snapshot) {
-        if (snapshot.hasData) {
-          var isUserLoggedIn = snapshot.data;
+      builder: (_, isLoggedInSnapshot) {
+        if (isLoggedInSnapshot.hasData) {
+          var isUserLoggedIn = isLoggedInSnapshot.data;
           if (isUserLoggedIn != null) {
             if (isUserLoggedIn) {
               return ChangeNotifierProvider<HomeModel>(
@@ -45,15 +45,33 @@ class MyApp extends StatelessWidget {
             child: const LoginPage(),
           );
         }
-        if (snapshot.hasError) {
+        if (isLoggedInSnapshot.hasError) {
           return ChangeNotifierProvider<LoginModel>(
             create: (_) => LoginModel(),
             child: const LoginPage(),
           );
         }
-        return const SafeArea(
+        return SafeArea(
           child: Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: FutureBuilder(
+                future: Future.delayed(const Duration(seconds: 4), () {
+                  return true;
+                }),
+                builder: (_, snapshot) {
+                  if (snapshot.hasData) {
+                    return ChangeNotifierProvider<LoginModel>(
+                      create: (_) => LoginModel(),
+                      child: const LoginPage(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return ChangeNotifierProvider<LoginModel>(
+                      create: (_) => LoginModel(),
+                      child: const LoginPage(),
+                    );
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                }),
           ),
         );
       },

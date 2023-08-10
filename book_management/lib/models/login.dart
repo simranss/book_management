@@ -53,18 +53,17 @@ class LoginModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         await SharedPrefsUtils.setBool(SharedPrefsStrings.isLoggedIn, true);
-        await SharedPrefsUtils.setString(
-            SharedPrefsStrings.userId, bodyMap['id']);
+        await SharedPrefsUtils.setInt(SharedPrefsStrings.userId, bodyMap['id']);
         await SharedPrefsUtils.setString(
             SharedPrefsStrings.userEmail, bodyMap['email']);
-        await SharedPrefsUtils.setString(
+        await SharedPrefsUtils.setInt(
             SharedPrefsStrings.userAccessGroup, bodyMap['access_group']);
         await SharedPrefsUtils.setString(
             SharedPrefsStrings.userName, bodyMap['name']);
         await SharedPrefsUtils.setString(
             SharedPrefsStrings.userPhone, bodyMap['phone']);
-        await SharedPrefsUtils.setBool(
-            SharedPrefsStrings.isUserVerified, bodyMap['email_verified']);
+        await SharedPrefsUtils.setBool(SharedPrefsStrings.isUserVerified,
+            bodyMap['email_verified'] == 0 ? false : true);
         if (context.mounted) {
           NavigationUtils.pushReplacement(
             context,
