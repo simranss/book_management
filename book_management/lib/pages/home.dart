@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:book_management/classes/book.dart';
 import 'package:book_management/components/future.dart';
 import 'package:book_management/constants/api_strings.dart';
+import 'package:book_management/constants/shared_prefs_strings.dart';
 import 'package:book_management/models/add_book.dart';
 import 'package:book_management/models/home.dart';
 import 'package:book_management/pages/add_book.dart';
 import 'package:book_management/pages/book_details.dart';
 import 'package:book_management/utils/navigation_utils.dart';
+import 'package:book_management/utils/shared_prefs_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -141,19 +143,51 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            NavigationUtils.push(
-              context,
-              ChangeNotifierProvider<AddBookModel>(
-                create: (_) => AddBookModel(),
-                child: const AddBookPage(),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
+        floatingActionButton: _floatingActionButton(),
       ),
+    );
+  }
+
+  Widget _floatingActionButton() {
+    return FutureBuilder<int?>(
+      future: SharedPrefsUtils.getInt(SharedPrefsStrings.userAccessGroup),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var accessGroup = snapshot.data;
+          if (accessGroup != null) {
+            if (accessGroup == 1) {
+              return _addBookFAB(context);
+            }
+          }
+        }
+        return _requestBookFAB();
+      },
+    );
+  }
+
+  Widget _requestBookFAB() {
+    return FloatingActionButton(
+      onPressed: () {
+        debugPrint('request book clicked');
+      },
+      tooltip: 'Request a Book',
+      child: const Icon(Icons.add),
+    );
+  }
+
+  Widget _addBookFAB(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        NavigationUtils.push(
+          context,
+          ChangeNotifierProvider<AddBookModel>(
+            create: (_) => AddBookModel(),
+            child: const AddBookPage(),
+          ),
+        );
+      },
+      tooltip: 'Add a Book',
+      child: const Icon(Icons.add),
     );
   }
 }
