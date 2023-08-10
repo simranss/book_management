@@ -62,14 +62,6 @@ const getBooksByTitle = async (title) => {
   }
 };
 
-const insertBook = async (title, description, author, pages, releaseYear) => {
-  try {
-    await booksDB.insertBook(title, description, pages, author, releaseYear);
-  } catch (error) {
-    console.log("error: ", error);
-  }
-};
-
 bookRouter.get("/books", async (req, res) => {
   const books = await getBooks();
   if (books.length > 0) {
@@ -86,8 +78,19 @@ bookRouter.post("/book", async (req, res) => {
   const releaseYear = req.body.release_year;
 
   if (title && description && authorId && pages && releaseYear) {
-    await insertBook(title, description, authorId, pages, releaseYear);
-    return res.status(200).json({ message: "Book inserted successfully" });
+    try {
+      await booksDB.insertBook(
+        title,
+        description,
+        pages,
+        authorId,
+        releaseYear
+      );
+      return res.status(200).json({ message: "Book inserted successfully" });
+    } catch (error) {
+      console.log("error: ", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
   res.status(405).json({ message: "One or more fields empty" });
 });
@@ -107,7 +110,7 @@ bookRouter.get("/books/author/:author", async (req, res) => {
   if (books.length > 0) {
     return res.status(200).send(books);
   }
-  res.status(404).json({ message: "No books found." });
+  res.status(404).json({ message: `No books found with author ${author}.` });
 });
 
 bookRouter.get("/books/title/:title", async (req, res) => {
@@ -116,7 +119,7 @@ bookRouter.get("/books/title/:title", async (req, res) => {
   if (books.length > 0) {
     return res.status(200).send(books);
   }
-  res.status(404).json({ message: "No books found." });
+  res.status(404).json({ message: `No books found with title ${title}.` });
 });
 
 const getAuthorsByName = async (name) => {
@@ -156,7 +159,7 @@ bookRouter.get("/authors/name/:name", async (req, res) => {
   if (authors.length > 0) {
     return res.status(200).send(authors);
   }
-  res.status(404).json({ message: "No authors found." });
+  res.status(404).json({ message: `No authors found with name ${name}.` });
 });
 
 bookRouter.get("/author/id/:id", async (req, res) => {
