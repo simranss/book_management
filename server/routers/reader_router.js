@@ -33,7 +33,15 @@ readerRouter.post("/login", async (req, res) => {
     let validUser = validUsers[0];
     let validPassword = validUser["password"];
     if (validPassword.toString().trim() === password.toString().trim()) {
-      return res.status(200).json({ message: "User successfully logged in" });
+      return res.status(200).json({
+        message: "User successfully logged in",
+        access_group: validUser["access_group"],
+        id: validUser["id"],
+        name: validUser["name"],
+        email: validUser["email"],
+        phone: validUser["phone"],
+        email_verified: validUser["verified"],
+      });
     } else {
       return res.status(401).json({ message: "Incorrect password" });
     }
