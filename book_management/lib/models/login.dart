@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:book_management/constants/shared_prefs_strings.dart';
 import 'package:book_management/models/home.dart';
 import 'package:book_management/pages/home.dart';
 import 'package:book_management/utils/navigation_utils.dart';
+import 'package:book_management/utils/shared_prefs_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -40,12 +42,29 @@ class LoginModel extends ChangeNotifier {
       debugPrint('status code: ${response.statusCode}');
       debugPrint('response body: ${response.body}');
 
+      var body = response.body;
+      var bodyMap = jsonDecode(body);
+
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(jsonDecode(response.body)['message'])));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(bodyMap['message']),
+        ));
       }
 
       if (response.statusCode == 200) {
+        await SharedPrefsUtils.setBool(SharedPrefsStrings.isLoggedIn, true);
+        await SharedPrefsUtils.setString(
+            SharedPrefsStrings.userId, bodyMap['id']);
+        await SharedPrefsUtils.setString(
+            SharedPrefsStrings.userEmail, bodyMap['email']);
+        await SharedPrefsUtils.setString(
+            SharedPrefsStrings.userAccessGroup, bodyMap['access_group']);
+        await SharedPrefsUtils.setString(
+            SharedPrefsStrings.userName, bodyMap['name']);
+        await SharedPrefsUtils.setString(
+            SharedPrefsStrings.userPhone, bodyMap['phone']);
+        await SharedPrefsUtils.setBool(
+            SharedPrefsStrings.isUserVerified, bodyMap['email_verified']);
         if (context.mounted) {
           NavigationUtils.pushReplacement(
             context,
