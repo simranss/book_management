@@ -157,7 +157,7 @@ bookRouter.get("/authors/name/:name", async (req, res) => {
   const name = req.params.name;
   const authors = await getAuthorsByName(name);
   if (authors.length > 0) {
-    return res.status(200).send(authors);
+    return res.status(200).send({ data: authors });
   }
   res.status(404).json({ message: `No authors found with name ${name}.` });
 });
@@ -166,9 +166,34 @@ bookRouter.get("/author/id/:id", async (req, res) => {
   const id = req.params.id;
   const author = await getAuthorById(id);
   if (author["id"]) {
-    return res.status(200).send(author);
+    return res.status(200).json({ data: author });
   }
   return res.status(404).json({ message: `No author found with id ${id}` });
+});
+
+const getKeywordsByBookId = async (bookId) => {
+  let keywords = [];
+  try {
+    keywords = await booksDB.getKeywordsByBookId(bookId);
+    if (!keywords) {
+      keywords = [];
+    }
+  } catch (error) {
+    console.log("error: ", error);
+  } finally {
+    return keywords;
+  }
+};
+
+bookRouter.get("/keywords/book_id/:book_id", async (req, res) => {
+  const bookId = req.params.book_id;
+  const keywords = await getKeywordsByBookId(bookId);
+  if (keywords.length > 0) {
+    return res.status(200).json({ data: keywords });
+  }
+  return res
+    .status(404)
+    .json({ message: `No keyword found for book with id ${bookId}` });
 });
 
 module.exports = {

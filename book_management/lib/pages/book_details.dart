@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:book_management/classes/book.dart';
+import 'package:book_management/classes/keyword.dart';
+import 'package:book_management/constants/api_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class BookDetailsPage extends StatelessWidget {
   const BookDetailsPage({super.key, required this.book});
@@ -126,11 +131,76 @@ class BookDetailsPage extends StatelessWidget {
                     ),
                   ),
                 ),
+                FutureBuilder(
+                  future: http.get(Uri.parse(
+                      '${APIStrings.KEYWORDS_BY_BOOK_ID_API}/${book.id}')),
+                  builder: (_, snapshot) {
+                    if (snapshot.hasData) {
+                      var response = snapshot.data;
+                      if (response != null) {
+                        debugPrint('status code: ${response.statusCode}');
+                        debugPrint('body: ${response.body}');
+                        if (response.statusCode == 200) {
+                          Map<String, dynamic> res = jsonDecode(response.body);
+                          List<dynamic> data = res['data'];
+                          return _keywordsSuccessWidget(data);
+                        }
+                      }
+                    }
+                    if (snapshot.hasError) {
+                      debugPrint('error: ${snapshot.error}');
+                      return const SizedBox();
+                    }
+                    return const SizedBox();
+                  },
+                ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _keywordsSuccessWidget(List data) {
+    List<Widget> keywordWidgets = [];
+    for (Map<String, dynamic> keywordData in data) {
+      Keyword keyword = Keyword.fromMap(keywordData);
+      Widget keywordWidget = Card(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          child: Text(
+            keyword.keyword,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ),
+      );
+      keywordWidgets.add(keywordWidget);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: Text(
+            'Keywords:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        Wrap(
+          children: keywordWidgets,
+        ),
+      ],
     );
   }
 }

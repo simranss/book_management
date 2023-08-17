@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 class APIStrings {
-  static const String BASE_URL = 'http://localhost:8080';
+static const String BASE_URL = 'http://localhost:8080';
 
   static const String LOGIN_API = '$BASE_URL/reader/login';
   static const String REGISTER_API = '$BASE_URL/reader/register';
@@ -18,4 +18,8 @@ class APIStrings {
   static const String AUTHOR_API = '$BASE_URL/author';
   static const String AUTHORS_BY_NAME_API = '$AUTHORS_API/name';
   static const String AUTHOR_BY_ID_API = '$AUTHOR_API/id';
+
+  // keywords APIs
+  static const String KEYWORDS_API = '$BASE_URL/keywords';
+  static const String KEYWORDS_BY_BOOK_ID_API = '$KEYWORDS_API/book_id';
 }

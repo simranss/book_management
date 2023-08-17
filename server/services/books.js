@@ -54,6 +54,14 @@ const getAuthorById = async (id) => {
   return row;
 };
 
+const getKeywordsByBookId = async (bookId) => {
+  const rows = await db.query(
+    `select keyword_books.id, keyword_books.keyword_id, keywords.keyword from keyword_books left join keywords on keyword_books.keyword_id = keywords.id where keyword_books.book_id = ${bookId} limit 20;`
+  );
+  console.log(rows);
+  return rows;
+};
+
 module.exports = {
   insertBook,
   getBookById,
@@ -62,4 +70,5 @@ module.exports = {
   getLatestBooks,
   getAuthorsByName,
   getAuthorById,
+  getKeywordsByBookId,
 };
