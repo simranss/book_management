@@ -1,6 +1,7 @@
 import 'package:book_management/models/login.dart';
 import 'package:book_management/models/register.dart';
 import 'package:book_management/pages/register.dart';
+import 'package:book_management/utils/input_string_validator.dart';
 import 'package:book_management/utils/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,9 @@ class LoginPage extends StatelessWidget {
                         if (value == null || value.trim().isEmpty) {
                           return 'Required';
                         }
+                        if (!value.trim().isValidEmail()) {
+                          return 'Enter a valid email';
+                        }
                         return null;
                       },
                     ),
@@ -76,7 +80,7 @@ class LoginPage extends StatelessWidget {
                         if (value == null || value.trim().isEmpty) {
                           return 'Required';
                         }
-                        return null;
+                        return value.isValidPassword();
                       },
                     ),
                     const SizedBox(height: 10),
