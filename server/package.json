@@ -1,7 +1,7 @@
 {
-  "name": "book_management_backend",
+  "name": "s_reads_backend",
   "version": "1.0.0",
-  "description": "Backend for book_management flutter app (mobile, web, desktop)",
+  "description": "Backend for s_reads flutter app (mobile, web, desktop)",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
